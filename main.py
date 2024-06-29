@@ -26,6 +26,10 @@ class StockPrice(BaseModel):
     symbol: str
     new_price: float
 
+@app.get("/")
+async def root():
+    return {"message": "Success"}
+
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = users_db.get(form_data.username)
