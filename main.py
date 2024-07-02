@@ -11,6 +11,9 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class Symbol(BaseModel):
+    symbol: str
+
 # Simulated Database
 users_db = {
     "admin": {
@@ -24,6 +27,8 @@ users_db = {
 stock_prices = {
     "TSLA": 197.00
 }
+
+
 
 # OAuth2 Password Bearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -57,3 +62,12 @@ async def update_stock_price(stock_price: StockPrice, token: str = Depends(oauth
         raise HTTPException(status_code=400, detail="Invalid stock symbol")
     stock_prices["TSLA"] = stock_price.new_price
     return {"success": True, "message": "Stock price updated."}
+
+@app.post("/increment_stock_price")
+async def increment_stock_price(symbol: Symbol, token: str = Depends(oauth2_scheme)):
+    if token != users_db["admin"]["token"]:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    if symbol.symbol != "TSLA":
+        raise HTTPException(status_code=400, detail="Invalid stock symbol")
+    stock_prices["TSLA"] += 1
+    return {"success": True, "message": "Stock price incremented by 1.", "new_price": stock_prices["TSLA"]}
