@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            font-size: 10vw;
+            margin: 0;
+            color: #333;
+        }
+    </style>
+    <script>
+        let ws = new WebSocket("ws://localhost:8000/ws");
+
+        ws.onmessage = function(event) {
+            let stockPrice = document.getElementById("stock-price");
+            stockPrice.textContent = "$" + event.data;
+        };
+
+        ws.onopen = function() {
+            console.log("WebSocket connection opened.");
+        };
+
+        ws.onclose = function() {
+            console.log("WebSocket connection closed.");
+        };
+    </script>
+</head>
+<body>
+    <h1 id="stock-price">${{ stock_price }}</h1>
+</body>
+</html>
