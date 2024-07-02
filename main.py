@@ -1,9 +1,15 @@
 from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from typing import Dict
+from fastapi import FastAPI
+
 
 app = FastAPI()
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
 # Simulated Database
 users_db = {
@@ -31,9 +37,9 @@ async def root():
     return {"message": "Success"}
 
 @app.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = users_db.get(form_data.username)
-    if not user or user["password"] != form_data.password:
+async def login(login_request: LoginRequest):
+    user = users_db.get(login_request.username)
+    if not user or user["password"] != login_request.password:
         raise HTTPException(status_code=400, detail="Invalid username or password")
     return {"access_token": user["token"], "token_type": "bearer"}
 
@@ -51,5 +57,3 @@ async def update_stock_price(stock_price: StockPrice, token: str = Depends(oauth
         raise HTTPException(status_code=400, detail="Invalid stock symbol")
     stock_prices["TSLA"] = stock_price.new_price
     return {"success": True, "message": "Stock price updated."}
-
-# Run the app with: uvicorn main:app --reload
