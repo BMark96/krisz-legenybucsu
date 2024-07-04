@@ -31,7 +31,7 @@ users_db = {
 
 # Simulated Stock Prices
 stock_prices = {
-    "TSLA": 197
+    "TSLA": 246
 }
 
 
@@ -60,7 +60,7 @@ async def get_stock_price(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Invalid token")
     return {"symbol": "TSLA", "price": stock_prices["TSLA"]}
 
-@app.post("/update_stock_price")
+@app.post("/update_stock_price", include_in_schema=False)
 async def update_stock_price(stock_price: StockPrice, token: str = Depends(oauth2_scheme)):
     if token != users_db["admin"]["token"]:
         raise HTTPException(status_code=401, detail="Invalid token")
