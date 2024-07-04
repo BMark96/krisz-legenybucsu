@@ -43,7 +43,7 @@ class StockPrice(BaseModel):
     symbol: str
     new_price: float
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def root():
     return {"message": "Success"}
 
@@ -80,7 +80,7 @@ async def increment_stock_price(symbol: Symbol, token: str = Depends(oauth2_sche
     await notify_price_update(stock_prices["TSLA"])
     return {"success": True, "message": "Stock price incremented by 1.", "new_price": stock_prices["TSLA"]}
 
-@app.get("/tsla")
+@app.get("/tsla", include_in_schema=False)
 async def display_stock_price(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "stock_price": stock_prices["TSLA"]})
 
